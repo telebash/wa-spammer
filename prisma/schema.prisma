@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  pkId      String   @id @default(cuid())
+  sessionId String
+  id        String
+  data      String
+  status    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  maillers   Mailler[]
+
+  @@unique([sessionId, id], map: "unique_id_per_session_id_session")
+  @@index([sessionId])
+}
+
+model Mailler {
+  pkId String @id @default(cuid())
+  status String
+  data String?
+  sessionId String
+  session Session @relation(fields: [sessionId], references: [pkId])
+}
